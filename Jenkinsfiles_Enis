@@ -14,7 +14,7 @@ node{
   } 
   stage('5deploy2UAT'){
     sh "echo 'deploy to UAT'  "
-    deploy adapters: [tomcat8(credentialsId: 'tomcat-credentials', path: '', url: 'http://3.94.182.4:8080/')], contextPath: null, war: 'target/*war'
+    deploy adapters: [tomcat8(credentialsId: 'tomcat-credentials', path: '', url: 'http://172.31.17.151:8080/')], contextPath: null, war: 'target/*war'
   }
   stage('6approvalGate'){
     sh "echo 'ready for review' "
@@ -23,7 +23,7 @@ node{
       }
   }
   stage('7deploy2Prod'){
-    deploy adapters: [tomcat8(credentialsId: 'tomcat-credentials', path: '', url: 'http://3.94.182.4:8080/')], contextPath: null, war: 'target/*war'
+    deploy adapters: [tomcat8(credentialsId: 'tomcat-credentials', path: '', url: 'http://172.31.17.151:8080/')], contextPath: null, war: 'target/*war'
   }
   stage('8emailNotification'){
     emailext body: '''hi all,
