@@ -108,7 +108,7 @@
 	</distributionManagement>
 	
 	<build>
-		<finalName>Tesla-app</finalName>
+		<finalName>sagllc</finalName>
 		
 		<plugins>
 			<plugin>
