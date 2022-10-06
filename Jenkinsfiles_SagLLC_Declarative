@@ -1,0 +1,59 @@
+pipeline{
+  agent any 
+  tools {
+    maven "maven3.8.6"
+  }  
+  stages {
+    stage('1GetCode'){
+      steps{
+        sh "echo 'cloning the latest application version' "
+        git branch: 'sagllc', credentialsId: 'gitHubCredentials', url: 'https://github.com/sagenis/maven-web-application.git'
+      }
+    }
+    stage('2Test+Build'){
+      steps{
+          sh "echo 'running Junit-test-cases' "
+          sh "echo 'Testing must passed to create artifacts' "
+          sh "mvn clean package"
+      }    
+    }
+    stage('3CodeQuality'){
+      steps{
+          sh "echo 'performing code quality' "
+          sh "mvn sonar:sonar"
+      }    
+    }
+    stage('4uploadNexus'){
+      steps{
+          sh "echo 'uploading artifacts to Nexus' "
+          sh "mvn deploy"
+      }    
+    }
+    stage('5deploy2prod'){
+      steps{
+          sh "echo 'deploying to production server' "
+          deploy adapters: [tomcat8(credentialsId: 'tomcat-credentials', path: '', url: 'http://34.235.126.143:8080/')], contextPath: null, war: 'target/*war'
+      }    
+    }
+  }
+  post{
+    always{
+      emailext body: '''hi guys 
+please check status
+Thanks
+Enis''', recipientProviders: [buildUser(), developers()], subject: 'success', to: 'sagllc@gmail.com'
+    }
+    success{
+      emailext body: '''hi guys 
+good jobs
+Thanks
+Enis''', recipientProviders: [buildUser(), developers()], subject: 'success', to: 'sagllc@gmail.com'
+    } 
+    failure{
+      emailext body: '''hi guys 
+build failed. please check.
+Thanks
+Enis''', recipientProviders: [buildUser(), developers()], subject: 'success', to: 'sagllc@gmail.com'
+    }
+  }  
+}
